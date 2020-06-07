@@ -1,0 +1,10 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =8
+let g:netrw_dirhist_1='/home/neal/Github/learnC/absolutePermutation'
+let g:netrw_dirhist_2='/home/neal/Github'
+let g:netrw_dirhist_3='/home/neal/Github/learnC'
+let g:netrw_dirhist_4='/home/neal/Github'
+let g:netrw_dirhist_5='/home/neal/Github/waspAI'
+let g:netrw_dirhist_6='/home/neal'
+let g:netrw_dirhist_7='/home/neal/Github'
+let g:netrw_dirhist_8='/home/neal/Github/waspAI'

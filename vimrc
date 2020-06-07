@@ -95,7 +95,11 @@ let @c="I//j"
 let @u=":s#//##gj"
 
 "maps for quick select all
-let @y="ggVG"
+:map <leader>a ggVG
+
+"center in on the found search query
+:map n nzz
+:map N Nzz
 
 "map for quick surround in {}
 "doesn't work too well with comments
@@ -109,6 +113,11 @@ let @y="ggVG"
 "requires YCM
 :map <leader>n :lnext<CR>
 
+"read in template for hackerrank
+:map <leader>rt :read ~/.vim/scripts/template.cpp<CR>
+
+"edit template for hackerrank
+:map <leader>et :e ~/.vim/scripts/template.cpp<CR>
 let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
 let g:ycm_use_clangd=0
 let g:ycm_always_populate_location_list = 1
@@ -130,17 +139,16 @@ Plug 'ycm-core/YouCompleteMe'
 call plug#end()
 
 "Sets the main program to send no visual errors instead of annoying beeps!
-:set vb
-:set novb
+:set vb t_vb=
 
 :set foldmethod=indent
-augroup AutoSaveFolds
-  autocmd!
-  " view files are about 500 bytes
-  " bufleave but not bufwinleave captures closing 2nd tab
-  " nested is needed by bufwrite* (if triggered via other autocmd)
-  autocmd BufWinLeave,BufLeave,BufWritePost ?* nested silent! mkview!
-  autocmd BufWinEnter ?* silent! loadview
-augroup end
+"augroup AutoSaveFolds
+  "autocmd!
+  "" view files are about 500 bytes
+  "" bufleave but not bufwinleave captures closing 2nd tab
+  "" nested is needed by bufwrite* (if triggered via other autocmd)
+  "autocmd BufWinLeave,BufLeave,BufWritePost ?* nested silent! mkview!
+  "autocmd BufWinEnter ?* silent! loadview
+"augroup end
 
 

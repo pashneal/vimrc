@@ -12,5 +12,8 @@ then
 elif [ ${v: -3} = ".sh" ]
 then
 	bash $v
+elif [  ${v: -4} = ".lua" ]
+then 
+	love .
 fi
 
