@@ -65,11 +65,15 @@ set autochdir
 " prevents the execution of arbitrary code in my vimrc"
 set secure
 
-" does stuff with tabs so that the white space is nice and neat in practice
-set tabstop=4
-set softtabstop=4
-set shiftwidth=4
-set noexpandtab
+filetype plugin indent on
+" On pressing tab, insert 2 spaces
+set expandtab
+" show existing tab with 2 spaces width
+set tabstop=2
+set softtabstop=2
+" when indenting with '>', use 2 spaces width
+set shiftwidth=2
+
 
 " This option will allow the user to go to the current indentation level by
 " pressing enter from the previous line
@@ -118,13 +122,26 @@ let @u=":s#//##gj"
 
 "edit template for hackerrank
 :map <leader>et :e ~/.vim/scripts/template.cpp<CR>
+
+
+"search for a file recursively through directory
+:map <C-F> :set autochdir<CR>:Files<CR>
+
 let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
 let g:ycm_use_clangd=0
 let g:ycm_always_populate_location_list = 1
 let g:ycm_min_num_of_chars_for_completion = 7
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_autoclose_preview_window_after_completion = 1
-
+let g:ycm_filetype_whitelist = {
+			\ "c":1,
+			\ "cpp":1,
+			\ "objc":1,
+			\ "sh":1,
+			\ "zsh":1,
+			\ "zimbu":1,
+			\ "python":1,
+			\ }
 
 call plug#begin()
 
@@ -132,15 +149,20 @@ call plug#begin()
 " On-demand loading
 " Use PlugInstall and PlugUpdate"
 Plug 'myusuf3/numbers.vim'
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+" fzf is a bit better for the time being
+" Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'preservim/nerdcommenter'
 Plug 'vim-airline/vim-airline'
 Plug 'ycm-core/YouCompleteMe'
+Plug 'nvie/vim-flake8'
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 call plug#end()
+
 
 "Sets the main program to send no visual errors instead of annoying beeps!
 :set vb t_vb=
-
+:map  :%s/
 :set foldmethod=indent
 "augroup AutoSaveFolds
   "autocmd!
@@ -151,4 +173,55 @@ call plug#end()
   "autocmd BufWinEnter ?* silent! loadview
 "augroup end
 
+" Stolen from StackOverflow
+" Shell ------------------------------------------------------------------- {{{
+function! s:ExecuteInShell(command) " {{{
+    let command = join(map(split(a:command), 'expand(v:val)'))
+    let winnr = bufwinnr('^' . command . '$')
+    silent! execute  winnr < 0 ? 'botright new ' . fnameescape(command) : winnr . 'wincmd w'
+    setlocal buftype=nowrite bufhidden=wipe nobuflisted noswapfile nowrap nonumber
+    echo 'Execute ' . command . '...'
+    silent! execute 'silent %!'. command
+    silent! redraw
+    silent! execute 'au BufUnload <buffer> execute bufwinnr(' . bufnr('#') . ') . ''wincmd w'''
+    silent! execute 'nnoremap <silent> <buffer> <LocalLeader>r :call <SID>ExecuteInShell(''' . command . ''')<CR>:AnsiEsc<CR>'
+    silent! execute 'nnoremap <silent> <buffer> q :q<CR>'
+    silent! execute 'AnsiEsc'
+    echo 'Shell command ' . command . ' executed.'
+endfunction " }}}
+command! -complete=shellcmd -nargs=+ Shell call s:ExecuteInShell(<q-args>)
+nnoremap <leader>s :Shell
 
+function! s:VExecuteInShell(command) " {{{
+    let command = join(map(split(a:command), 'expand(v:val)'))
+    let winnr = bufwinnr('^' . command . '$')
+    silent! execute  winnr < 0 ? 'botright vnew ' . fnameescape(command) : winnr . 'wincmd w'
+    setlocal buftype=nowrite bufhidden=wipe nobuflisted noswapfile nowrap nonumber
+    echo 'Execute ' . command . '...'
+    silent! execute 'silent %!'. command
+    silent! redraw
+    silent! execute 'au BufUnload <buffer> execute bufwinnr(' . bufnr('#') . ') . ''wincmd w'''
+    silent! execute 'nnoremap <silent> <buffer> <LocalLeader>r :call <SID>VExecuteInShell(''' . command . ''')<CR>:AnsiEsc<CR>'
+    silent! execute 'nnoremap <silent> <buffer> q :q<CR>'
+    silent! execute 'AnsiEsc'
+    echo 'Shell command ' . command . ' executed.'
+endfunction " }}}
+command! -complete=shellcmd -nargs=+ VShell call s:VExecuteInShell(<q-args>)
+nnoremap <leader>vs :VShell
+" }}}
+"
+ 
+"""""""""""""""""""""" _MAPS FOR WASPAI BITBOARD_"""""""""""""""""""""""""""""
+" Get the 8x8 hex bitboard of the current number for WaspAi
+:nnoremap <leader>bb m'<C-A><C-X>"1yiw:Shell ~/.vim/scripts/hexView.sh <C-r>1<CR>
+" Same as above but vertical split
+:nnoremap <leader>vb m'<C-A><C-X>"1yiw:VShell ~/.vim/scripts/hexView.sh <C-r>1<CR>
+" Same as above but paste result into current window
+:nnoremap <leader>pb m'<C-A><C-X>"1yiw:r !bash /home/neal/.vim/scripts/hexView.sh <C-r>1<CR>`'
+
+" Like J but for 8 consecutive lines hence the name (b)itboard J
+:nnoremap <leader>Jb <C-v>$7jd8k$p8j8dd
+
+" (a)ppend (b)itboard from the bottom to the top (deletes the line number
+" column)
+:nmap <leader>ab 8k$/.* 8<CR>0<C-v>7jf1l"1d<leader>Jb

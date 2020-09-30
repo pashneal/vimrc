@@ -15,5 +15,11 @@ then
 elif [  ${v: -4} = ".lua" ]
 then 
 	love .
+elif [ ${v: -3} = ".pl" ]
+then
+	perl $v
+elif [ ${v: -3} = ".ly" ]
+then
+	lilypond --pdf -o $v $v && xdg-open $v.pdf
 fi
 
