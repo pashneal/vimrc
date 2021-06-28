@@ -42,8 +42,8 @@ set background=dark
 " differently from regular Vi. They are highly recommended though.
 set showcmd		" Show (partial) command in status line.
 "set showmatch		" Show matching brackets.
-set ignorecase		" Do case insensitive matching
-"set smartcase		" Do smart case matching
+"set ignorecase		" Do case insensitive matching
+set smartcase		" Do smart case matching
 set incsearch		" Incremental search
 "set autowrite		" Automatically save before commands like :next and :make
 "set hidden		" Hide buffers when they are abandoned
@@ -59,8 +59,8 @@ let mapleader = " "
 "forces Vim to source vimrc file if it is present in the working directory"
 set exrc
 
+
 " Sets the working directory to the current file that you are editing
-set autochdir
 
 " prevents the execution of arbitrary code in my vimrc"
 set secure
@@ -85,16 +85,15 @@ set number
 
 "show the bar always
 set laststatus=2
-let g:airline#extensions#tabline#enabled=1
+let g:airline#extensions#tabline#enabled=1 
 
-
-"This setting is show that the command that you are currently typing is shown in vim
+" Display command at the bottom of the vim bar
 set showcmd
 
 set autowrite
 nnoremap <C-c> :!bash ~/.vim/scripts/compileSource.sh %:t<CR>
 vnoremap <C-c> "+y
-"maps macros for c++ comments in vim
+" maps macros for c++ comments in vim
 let @c="I//j"
 let @u=":s#//##gj"
 
@@ -112,6 +111,7 @@ let @u=":s#//##gj"
 "maps for quickly selecting a definition rather than the 
 "clumsy <C-]> gets the next function call definition
 :map gd t(<C-]>zz
+:map g] :sp<CR><C-]>zz
 
 "for getting to the next error quickly
 "requires YCM
@@ -124,15 +124,13 @@ let @u=":s#//##gj"
 :map <leader>et :e ~/.vim/scripts/template.cpp<CR>
 
 
-"search for a file recursively through directory
-:map <C-F> :set autochdir<CR>:Files<CR>
-
 let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
 let g:ycm_use_clangd=0
 let g:ycm_always_populate_location_list = 1
 let g:ycm_min_num_of_chars_for_completion = 7
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_autoclose_preview_window_after_completion = 1
+let g:ycm_confirm_extra_conf = 0
 let g:ycm_filetype_whitelist = {
 			\ "c":1,
 			\ "cpp":1,
@@ -143,14 +141,21 @@ let g:ycm_filetype_whitelist = {
 			\ "python":1,
 			\ }
 
-call plug#begin()
+let g:flake8_show_quickfix=1  " 
+let g:flake8_show_in_file=0  " show
+let g:flake8_show_in_gutter=1  " show
+map <F6> :call flake8#Flake8UnplaceMarkers()<CR>
 
+
+
+call plug#begin()
 
 " On-demand loading
 " Use PlugInstall and PlugUpdate"
 Plug 'myusuf3/numbers.vim'
 " fzf is a bit better for the time being
 " Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
+Plug 'christoomey/vim-tmux-navigator'
 Plug 'preservim/nerdcommenter'
 Plug 'vim-airline/vim-airline'
 Plug 'ycm-core/YouCompleteMe'
@@ -225,3 +230,33 @@ nnoremap <leader>vs :VShell
 " (a)ppend (b)itboard from the bottom to the top (deletes the line number
 " column)
 :nmap <leader>ab 8k$/.* 8<CR>0<C-v>7jf1l"1d<leader>Jb
+"""""""""""""""""""""" _END MAPS FOR WASPAI BITBOARD_"""""""""""""""""""""""""""""
+
+" Fuzzy finder
+:map <C-f> :Files<CR>
+
+" Pull up rip-grep dialog
+:map <leader>R :Rg<CR>
+
+" Search current word using rip-grep
+:map <expr> <leader><C-r> ':Rg '.expand('<cword>').'<CR>'
+
+" Whatever is highlighted, google it! Uses the s command defined at
+" ~/.local/s and the s register
+:map <expr> gs ':!s '.expand('<cword>').'<CR>'
+
+" Interesting command: credit - https://dalibornasevic.com/posts/43-12-vim-tips
+" Select last yanked text
+:nnoremap <expr> gb '`[' . getregtype()[0] . '`]'
+
+" Normal mode on selected but less typing
+:map <leader>nn :normal 
+" Normal mode everywhere but less typing
+:map <leader>%% :%normal 
+
+:tnoremap <C-l> <C-w>l
+:tnoremap <C-j> <C-w>j
+:tnoremap <C-h> <C-w>h
+:tnoremap <C-k> <C-w>k
+
+

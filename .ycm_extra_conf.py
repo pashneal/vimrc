@@ -120,10 +120,10 @@ def MakeRelativePathsInFlagsAbsolute(flags, working_directory):
 def FlagsForClangComplete(root):
     try:
         clang_complete_path = FindNearest(root, '.clang_complete')
-        clang_complete_flags = open(clang_complete_path, 'r').read().splitlines()
-        return clang_complete_flags
-    except:
-        return None
+        clang_complete_flags = open(clang_complete_path, 'r').read().splitlines() 
+        return clang_complete_flags 
+    except: 
+        return None 
 
 def FlagsForInclude(root):
     try:
