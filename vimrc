@@ -42,7 +42,7 @@ set background=dark
 " differently from regular Vi. They are highly recommended though.
 set showcmd		" Show (partial) command in status line.
 "set showmatch		" Show matching brackets.
-"set ignorecase		" Do case insensitive matching
+set ignorecase		" Do case insensitive matching
 set smartcase		" Do smart case matching
 set incsearch		" Incremental search
 "set autowrite		" Automatically save before commands like :next and :make
@@ -232,6 +232,13 @@ nnoremap <leader>vs :VShell
 :nmap <leader>ab 8k$/.* 8<CR>0<C-v>7jf1l"1d<leader>Jb
 """""""""""""""""""""" _END MAPS FOR WASPAI BITBOARD_"""""""""""""""""""""""""""""
 
+" Get the 8x8 hex bitboard of the current number for WaspAi
+:nnoremap <leader>bt m' "1yiw:Shell ~/.vim/scripts/tetView.sh <C-r>1<CR>
+" Same as above but vertical split
+:nnoremap <leader>vt m' "1yiw:VShell ~/.vim/scripts/tetView.sh <C-r>1<CR>
+" Same as above but paste result into current window
+:nnoremap <leader>pt m' :r !bash /home/neal/.vim/scripts/tetView.sh <cword><CR>
+
 " Fuzzy finder
 :map <C-f> :Files<CR>
 
@@ -254,9 +261,31 @@ nnoremap <leader>vs :VShell
 " Normal mode everywhere but less typing
 :map <leader>%% :%normal 
 
+" Terminal-mode has quick escape as well
 :tnoremap <C-l> <C-w>l
 :tnoremap <C-j> <C-w>j
 :tnoremap <C-h> <C-w>h
 :tnoremap <C-k> <C-w>k
 
+" Quickly access terminal mode
+:noremap <leader>t :terminal<CR>
 
+" Quickly edit vimrc
+:noremap <leader>ev :vsp ~/.vim/vimrc<CR>
+
+" Quickly source vimrc
+:noremap <leader>sv :source ~/.vim/vimrc<CR>
+
+" Quick escape from terminal mode 
+:tnoremap  N
+
+" Quick find file in split
+:map gF :vsp<CR>gf
+
+
+" ____________________ Surround in block _________________
+
+:nmap <leader>' bi'wi'
+:vnoremap <leader>' I'<CR>gvA'<CR> 
+:nmap <leader>" bi"wi"
+:vnoremap <leader>" I"<CR>gvA"<CR> 
