@@ -6,6 +6,21 @@ then
 elif [ ${v: -2} = ".c" ] 
 then
 	g++ -std=c++11 $v -Wall -g -o $v.out && ./$v.out
+elif [ ${v: -3} = ".rs" ]
+then
+  echo ""
+  echo ""
+  echo "Trying cargo build..."
+  a=$(cargo build | grep "could not find") 
+  if [[ $a == "" ]]
+  then
+    cargo run
+  else
+    echo ""
+    echo ""
+    echo "Trying RustC compiler"
+    rustc $v && ./${v%.rs}
+  fi
 elif [ ${v: -4} = ".cpp" ] 
 then
 	g++ -std=c++11 $v -Wall -g -o $v.out && ./$v.out

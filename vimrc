@@ -124,6 +124,10 @@ let @u=":s#//##gj"
 :map <leader>et :e ~/.vim/scripts/template.cpp<CR>
 
 
+let g:ale_lint_on_save = 1
+let g:ale_linters = {'python':[],'javascript': []}
+" See :help ale_linters for more info (seriously, do it)
+
 let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
 let g:ycm_use_clangd=0
 let g:ycm_always_populate_location_list = 1
@@ -141,25 +145,22 @@ let g:ycm_filetype_whitelist = {
 			\ "python":1,
 			\ }
 
-let g:flake8_show_quickfix=1  " 
-let g:flake8_show_in_file=0  " show
-let g:flake8_show_in_gutter=1  " show
-map <F6> :call flake8#Flake8UnplaceMarkers()<CR>
-
-
+set hidden
+let g:racer_cmd = "/home/neal/.cargo/bin/racer"
 
 call plug#begin()
 
 " On-demand loading
-" Use PlugInstall and PlugUpdate"
+" Use PlugInstall and PlugUpdate");
 Plug 'myusuf3/numbers.vim'
 " fzf is a bit better for the time being
 " Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'preservim/nerdcommenter'
+Plug 'dense-analysis/ale'
 Plug 'vim-airline/vim-airline'
 Plug 'ycm-core/YouCompleteMe'
-Plug 'nvie/vim-flake8'
+Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 call plug#end()
@@ -283,9 +284,7 @@ nnoremap <leader>vs :VShell
 :map gF :vsp<CR>gf
 
 
-" ____________________ Surround in block _________________
+:nmap "" ysiw
+:nmap <leader>" yss
 
-:nmap <leader>' bi'wi'
-:vnoremap <leader>' I'<CR>gvA'<CR> 
-:nmap <leader>" bi"wi"
-:vnoremap <leader>" I"<CR>gvA"<CR> 
+autocmd FileType rust inoremap <buffer> ppp println!("{}",  
