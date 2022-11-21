@@ -1,8 +1,9 @@
-
 " This line should not be removed as it ensures that various options are
 " properly set to work with the Vim-related packages available in Debian.
 runtime! debian.vim
-colorscheme slate
+
+"Fix backspace problem
+set backspace=indent,eol,start
 
 " Vim will load $VIMRUNTIME/defaults.vim if the user does not have a vimrc.
 " This happens after /etc/vim/vimrc(.local) are loaded, so it will override
@@ -24,7 +25,9 @@ endif
 
 " If using a dark background within the editing area and syntax highlighting
 " turn on this option as well
-set background=dark
+set background=light
+
+set nohlsearch
 
 " Uncomment the following to have Vim jump to the last position when
 " reopening a file
@@ -47,7 +50,7 @@ set smartcase		" Do smart case matching
 set incsearch		" Incremental search
 "set autowrite		" Automatically save before commands like :next and :make
 "set hidden		" Hide buffers when they are abandoned
-set mouse=a		" Enable mouse usage (all modes)
+"set mouse=a		" Enable mouse usage (all modes)
 
 " Source a global configuration file if available
 if filereadable("/etc/vim/vimrc.local")
@@ -95,7 +98,6 @@ nnoremap <C-c> :!bash ~/.vim/scripts/compileSource.sh %:t<CR>
 vnoremap <C-c> "+y
 " maps macros for c++ comments in vim
 let @c="I//j"
-let @u=":s#//##gj"
 
 "maps for quick select all
 :map <leader>a ggVG
@@ -104,19 +106,12 @@ let @u=":s#//##gj"
 :map n nzz
 :map N Nzz
 
-"map for quick surround in {}
-"doesn't work too well with comments
-:vnoremap <leader>{ dkA{"}=i{
 
-"maps for quickly selecting a definition rather than the 
-"clumsy <C-]> gets the next function call definition
-:map gd t(<C-]>zz
-:map g] :sp<CR><C-]>zz
+"maps for quickly selecting a definition rather than the "clumsy <C-]> gets the next function call definition
 
 "for getting to the next error quickly
 "requires YCM
-:map <leader>n :lnext<CR>
-
+:map <leader>n :lnext<CR> 
 "read in template for hackerrank
 :map <leader>rt :read ~/.vim/scripts/template.cpp<CR>
 
@@ -126,6 +121,8 @@ let @u=":s#//##gj"
 
 let g:ale_lint_on_save = 1
 let g:ale_linters = {'python':[],'javascript': []}
+highlight ALEWarning ctermbg=61
+
 " See :help ale_linters for more info (seriously, do it)
 
 let g:ycm_global_ycm_extra_conf = "~/.vim/.ycm_extra_conf.py"
@@ -153,16 +150,26 @@ call plug#begin()
 " On-demand loading
 " Use PlugInstall and PlugUpdate");
 Plug 'myusuf3/numbers.vim'
+"Plug 'sirver/ultisnips'
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsEditSplit="vertical"
+
+let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips'] 
 " fzf is a bit better for the time being
 " Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
-Plug 'christoomey/vim-tmux-navigator'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'preservim/nerdcommenter'
-Plug 'dense-analysis/ale'
 Plug 'vim-airline/vim-airline'
-Plug 'ycm-core/YouCompleteMe'
+"Plug 'dense-analysis/ale'
+"Plug 'christoomey/vim-tmux-navigator'
+"Plug 'ycm-core/YouCompleteMe'
 Plug 'tpope/vim-surround'
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+"Plug 'kkoomen/vim-doge'
+"Open Vim and run :call doge#install() after
 call plug#end()
 
 
@@ -268,6 +275,10 @@ nnoremap <leader>vs :VShell
 :tnoremap <C-h> <C-w>h
 :tnoremap <C-k> <C-w>k
 
+:nnoremap <C-l> <C-w>l
+:nnoremap <C-j> <C-w>j
+:nnoremap <C-h> <C-w>h
+:nnoremap <C-k> <C-w>k
 " Quickly access terminal mode
 :noremap <leader>t :terminal<CR>
 
@@ -278,13 +289,53 @@ nnoremap <leader>vs :VShell
 :noremap <leader>sv :source ~/.vim/vimrc<CR>
 
 " Quick escape from terminal mode 
-:tnoremap  N
+:tnoremap  <C-\><C-N>
 
 " Quick find file in split
 :map gF :vsp<CR>gf
 
 
-:nmap "" ysiw
+:nmap "' ysiw :nmap "" ysiW
 :nmap <leader>" yss
 
 autocmd FileType rust inoremap <buffer> ppp println!("{}",  
+
+
+function! Rusty()
+    nnoremap <C-e> :terminal cargo run<cr>
+    inoremap <C-e> <esc>:terminal cargo run<cr>
+endfunction 
+
+augroup rust
+    autocmd!
+    autocmd FileType rust call Rusty()
+augroup end
+
+"let g:UltiSnipsExpandTrigger="<tab>"
+"let g:UltiSnipsJumpForwardTrigger="<c-n>"
+"let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+"let g:UltiSnipsEditSplit="vertical"
+
+"let g:UltiSnipsSnippetDirectories=[$HOME.'/.vim/UltiSnips'] 
+
+
+
+" Set highlighting options so everything doesn't look weird
+" Make the error msg readable
+:hi ErrorMsg none
+:hi ErrorMsg term=reverse cterm=bold ctermbg=9 gui=bold guibg=Red
+" For the coc-rust-analyzer get rid of default ugly highlitng
+:hi CocInlayHint none
+:hi CocInlayHint ctermfg=12
+
+
+" Automatic ctags for rust
+autocmd BufRead *.rs :setlocal tags=./rusty-tags.vi;/
+
+
+:nnoremap <leader>ds :!rm /home/neal/.local/share/nvim/swap/  
+
+:nnoremap <leader><Left> <C-w>10<
+:nnoremap <leader><Right> <C-w>10>
+:nnoremap <leader><Up> <C-w>5+
+:nnoremap <leader><Down> <C-w>5-

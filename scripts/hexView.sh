@@ -16,4 +16,4 @@ elif [[ $v =~ 0b ]]
 then
   base=2
 fi
-/home/neal/.vim/scripts/tetrisViewer.cpp.out $num $base
+/home/neal/.vim/scripts/bitboardViewer.cpp.out $num $base
